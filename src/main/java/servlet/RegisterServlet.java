@@ -5,38 +5,38 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 
 import dao.DatabaseConnection;
+import dao.UserDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import models.User;
 
 @WebServlet("/RegisterServlet")
 public class RegisterServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
-        String name = request.getParameter("name");
-        String email = request.getParameter("email");
-        String password = request.getParameter("password");
-        String role = request.getParameter("role");
-
         try {
-            Connection conn = DatabaseConnection.getConnection();
-            String sql = "INSERT INTO Users (name, email, password, role) VALUES (?, ?, ?, ?)";
-            PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setString(1, name);
-            ps.setString(2, email);
-            ps.setString(3, password); // TODO: Hash the password
-            ps.setString(4, role);
-            
-            int row = ps.executeUpdate();
-            if (row > 0) {
-                response.getWriter().println("✅ Registration Successful!");
-            } else {
-                response.getWriter().println("❌ Registration Failed!");
+            String name = request.getParameter("name");
+            String email = request.getParameter("email");
+            String password = request.getParameter("password"); // TODO: Hash Password
+            String role = request.getParameter("role");
+            if (!role.equals("Admin") && !role.equals("Developer") && !role.equals("Tester")) {
+                response.sendRedirect("register.jsp?error=invalid_role");
+                return;
             }
-        } catch (Exception e) {
+            User newUser = new User(name, email, password, role);
+            UserDAO userDAO = new UserDAO();
+            if(userDAO.registerUser(newUser)) {
+                response.sendRedirect("login.jsp?registered=1");
+            } else {
+                response.sendRedirect("register.jsp?error=registration_failed");
+            }
+        } catch(Exception e) {
             e.printStackTrace();
+            response.sendRedirect("error.jsp?error=server_error");
         }
     }
 }
+

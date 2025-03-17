@@ -1,17 +1,14 @@
 package servlet;
 
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-
-import dao.DatabaseConnection;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.io.IOException;
+import dao.UserDAO;
+import models.User;
 
 @WebServlet("/LoginServlet")
 public class LoginServlet extends HttpServlet {
@@ -21,33 +18,35 @@ public class LoginServlet extends HttpServlet {
         String password = request.getParameter("password");
 
         try {
-            Connection conn = DatabaseConnection.getConnection();
-            String sql = "SELECT * FROM Users WHERE email=? AND password=?";
-            PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setString(1, email);
-            ps.setString(2, password);
-            ResultSet rs = ps.executeQuery();
+            UserDAO userDAO = new UserDAO();
+            User user = userDAO.loginUser(email, password);
 
-            if (rs.next()) {
+            if (user != null) {
                 HttpSession session = request.getSession();
-                session.setAttribute("user_id", rs.getInt("user_id"));
-                session.setAttribute("name", rs.getString("name"));
-                session.setAttribute("role", rs.getString("role"));
+                session.setAttribute("user_id", user.getUserId());
+                session.setAttribute("name", user.getName());
+                session.setAttribute("role", user.getRole());
 
-                // Redirect based on role
-                String role = rs.getString("role");
-                if (role.equals("Admin")) {
-                    response.sendRedirect("adminDashboard.jsp");
-                } else if (role.equals("Developer")) {
-                    response.sendRedirect("developerDashboard.jsp");
-                } else if (role.equals("Manager")) {
-                    response.sendRedirect("managerDashboard.jsp");
+                switch (user.getRole()) {
+                    case "Admin":
+                        response.sendRedirect("adminDashboard.jsp");
+                        break;
+                    case "Developer":
+                        response.sendRedirect("developerDashboard.jsp");
+                        break;
+                    case "Tester":
+                        response.sendRedirect("testerDashboard.jsp");
+                        break;
+                    default:
+                        response.sendRedirect("login.jsp?error=invalid_role");
+                        break;
                 }
             } else {
-                response.getWriter().println("❌ Invalid Credentials! Please try again.");
+                response.sendRedirect("login.jsp?error=invalid_credentials");
             }
         } catch (Exception e) {
             e.printStackTrace();
+            response.sendRedirect("login.jsp?error=server_error");
         }
     }
 }
