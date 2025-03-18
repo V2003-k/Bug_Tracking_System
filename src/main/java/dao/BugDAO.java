@@ -36,7 +36,7 @@ public class BugDAO {
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, newStatus);
-            ps.setInt(2, bugId);  // ✅ Fixed (was setString)
+            ps.setInt(2, bugId);
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
