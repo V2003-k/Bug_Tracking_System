@@ -6,7 +6,6 @@
 </head>
 <body>
     <h2>Error Occurred</h2>
-    <p>${param.error}</p>
-    <a href="index.jsp">Go Home</a>
+    <p>Something went wrong. Please try again later.</p>
 </body>
 </html>
