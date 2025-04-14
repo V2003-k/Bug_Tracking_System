@@ -1,5 +1,7 @@
 package com.bug_tracking_system.dao;
 
+import com.bug_tracking_system.model.Project;
+import com.bug_tracking_system.util.DBConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -8,9 +10,12 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+<<<<<<< HEAD
 import com.bug_tracking_system.model.Project;
 import com.bug_tracking_system.util.DatabaseUtil;
 
+=======
+>>>>>>> ccb8a1e (almost done)
 public class ProjectDAO {
     
     private static final String INSERT_PROJECT = "INSERT INTO Projects (project_name, description, start_date, end_date, status) VALUES (?, ?, ?, ?, ?)";
