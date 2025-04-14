@@ -8,10 +8,6 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-<<<<<<< HEAD
-    <h2>Error Occurred</h2>
-    <p>Something went wrong. Please try again later.</p>
-=======
     <div class="container mt-5">
         <div class="row justify-content-center">
             <div class="col-md-8">
@@ -42,6 +38,5 @@
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/js/all.min.js"></script>
->>>>>>> 9e79a15 (almost done)
 </body>
 </html>

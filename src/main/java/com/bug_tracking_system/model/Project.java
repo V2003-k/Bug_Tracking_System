@@ -1,6 +1,7 @@
 package com.bug_tracking_system.model;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 
 public class Project {
     private int projectId;
@@ -9,16 +10,10 @@ public class Project {
     private Date startDate;
     private Date endDate;
     private String status;
+    private Timestamp createdDate;
+    private Timestamp updatedDate;
     
-    public Project() {}
-    
-    public Project(int projectId, String projectName, String description, Date startDate, Date endDate, String status) {
-        this.projectId = projectId;
-        this.projectName = projectName;
-        this.description = description;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.status = status;
+    public Project() {
     }
     
     public int getProjectId() {
@@ -67,5 +62,21 @@ public class Project {
     
     public void setStatus(String status) {
         this.status = status;
+    }
+    
+    public Timestamp getCreatedDate() {
+        return createdDate;
+    }
+    
+    public void setCreatedDate(Timestamp createdDate) {
+        this.createdDate = createdDate;
+    }
+    
+    public Timestamp getUpdatedDate() {
+        return updatedDate;
+    }
+    
+    public void setUpdatedDate(Timestamp updatedDate) {
+        this.updatedDate = updatedDate;
     }
 }

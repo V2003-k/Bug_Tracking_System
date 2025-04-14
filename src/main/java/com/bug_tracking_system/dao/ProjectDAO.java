@@ -4,116 +4,128 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.bug_tracking_system.model.Project;
-import com.bug_tracking_system.util.DBConnection;
+import com.bug_tracking_system.util.DatabaseUtil;
 
 public class ProjectDAO {
     
-    public boolean addProject(Project project) {
-        String sql = "INSERT INTO projects (project_name, description, start_date, end_date, status) VALUES (?, ?, ?, ?, ?)";
-        Connection conn = null;
-        
-        try {
-            conn = DBConnection.getConnection();
-            PreparedStatement pstmt = conn.prepareStatement(sql);
-            pstmt.setString(1, project.getProjectName());
-            pstmt.setString(2, project.getDescription());
-            pstmt.setDate(3, project.getStartDate());
-            pstmt.setDate(4, project.getEndDate());
-            pstmt.setString(5, project.getStatus());
+    private static final String INSERT_PROJECT = "INSERT INTO Projects (project_name, description, start_date, end_date, status) VALUES (?, ?, ?, ?, ?)";
+    private static final String UPDATE_PROJECT = "UPDATE Projects SET project_name = ?, description = ?, start_date = ?, end_date = ?, status = ? WHERE project_id = ?";
+    private static final String DELETE_PROJECT = "DELETE FROM Projects WHERE project_id = ?";
+    private static final String SELECT_PROJECT_BY_ID = "SELECT * FROM Projects WHERE project_id = ?";
+    private static final String SELECT_ALL_PROJECTS = "SELECT * FROM Projects ORDER BY project_id";
+    
+    public int addProject(Project project) {
+        int generatedId = -1;
+        try (Connection conn = DatabaseUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(INSERT_PROJECT, Statement.RETURN_GENERATED_KEYS)) {
+            stmt.setString(1, project.getProjectName());
+            stmt.setString(2, project.getDescription());
+            stmt.setDate(3, project.getStartDate());
+            stmt.setDate(4, project.getEndDate());
+            stmt.setString(5, project.getStatus());
             
-            int rowsAffected = pstmt.executeUpdate();
-            return rowsAffected > 0;
-        } catch (SQLException | ClassNotFoundException e) {
+            int affectedRows = stmt.executeUpdate();
+            if (affectedRows > 0) {
+                try (ResultSet rs = stmt.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        generatedId = rs.getInt(1);
+                        project.setProjectId(generatedId);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return generatedId;
+    }
+    
+    public boolean updateProject(Project project) {
+        try (Connection conn = DatabaseUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(UPDATE_PROJECT)) {
+            stmt.setString(1, project.getProjectName());
+            stmt.setString(2, project.getDescription());
+            stmt.setDate(3, project.getStartDate());
+            stmt.setDate(4, project.getEndDate());
+            stmt.setString(5, project.getStatus());
+            stmt.setInt(6, project.getProjectId());
+            
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
             e.printStackTrace();
             return false;
-        } finally {
-            DBConnection.closeConnection(conn);
+        }
+    }
+    
+    public boolean deleteProject(int projectId) {
+        try (Connection conn = DatabaseUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(DELETE_PROJECT)) {
+            stmt.setInt(1, projectId);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
         }
     }
     
     public Project getProjectById(int projectId) {
-        String sql = "SELECT * FROM projects WHERE project_id = ?";
-        Connection conn = null;
         Project project = null;
-        
-        try {
-            conn = DBConnection.getConnection();
-            PreparedStatement pstmt = conn.prepareStatement(sql);
-            pstmt.setInt(1, projectId);
-            
-            ResultSet rs = pstmt.executeQuery();
+        try (Connection conn = DatabaseUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(SELECT_PROJECT_BY_ID)) {
+            stmt.setInt(1, projectId);
+            ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
-                project = new Project();
-                project.setProjectId(rs.getInt("project_id"));
-                project.setProjectName(rs.getString("project_name"));
-                project.setDescription(rs.getString("description"));
-                project.setStartDate(rs.getDate("start_date"));
-                project.setEndDate(rs.getDate("end_date"));
-                project.setStatus(rs.getString("status"));
+                project = extractProjectFromResultSet(rs);
             }
-        } catch (SQLException | ClassNotFoundException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            DBConnection.closeConnection(conn);
         }
-        
         return project;
     }
     
     public List<Project> getAllProjects() {
-        String sql = "SELECT * FROM projects";
-        Connection conn = null;
         List<Project> projects = new ArrayList<>();
-        
-        try {
-            conn = DBConnection.getConnection();
-            PreparedStatement pstmt = conn.prepareStatement(sql);
-            
-            ResultSet rs = pstmt.executeQuery();
+        try (Connection conn = DatabaseUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(SELECT_ALL_PROJECTS)) {
+            ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-                Project project = new Project();
-                project.setProjectId(rs.getInt("project_id"));
-                project.setProjectName(rs.getString("project_name"));
-                project.setDescription(rs.getString("description"));
-                project.setStartDate(rs.getDate("start_date"));
-                project.setEndDate(rs.getDate("end_date"));
-                project.setStatus(rs.getString("status"));
+                Project project = extractProjectFromResultSet(rs);
                 projects.add(project);
             }
-        } catch (SQLException | ClassNotFoundException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            DBConnection.closeConnection(conn);
         }
-        
         return projects;
     }
     
-    public boolean updateProject(Project project) {
-        String sql = "UPDATE projects SET project_name = ?, description = ?, start_date = ?, end_date = ?, status = ? WHERE project_id = ?";
-        Connection conn = null;
-        
-        try {
-            conn = DBConnection.getConnection();
-            PreparedStatement pstmt = conn.prepareStatement(sql);
-            pstmt.setString(1, project.getProjectName());
-            pstmt.setString(2, project.getDescription());
-            pstmt.setDate(3, project.getStartDate());
-            pstmt.setDate(4, project.getEndDate());
-            pstmt.setString(5, project.getStatus());
-            pstmt.setInt(6, project.getProjectId());
-            
-            int rowsAffected = pstmt.executeUpdate();
-            return rowsAffected > 0;
-        } catch (SQLException | ClassNotFoundException e) {
+    public int countAllProjects() {
+        int count = 0;
+        try (Connection conn = DatabaseUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement("SELECT COUNT(*) FROM Projects")) {
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                count = rs.getInt(1);
+            }
+        } catch (SQLException e) {
             e.printStackTrace();
-            return false;
-        } finally {
-            DBConnection.closeConnection(conn);
         }
+        return count;
+    }
+    
+    private Project extractProjectFromResultSet(ResultSet rs) throws SQLException {
+        Project project = new Project();
+        project.setProjectId(rs.getInt("project_id"));
+        project.setProjectName(rs.getString("project_name"));
+        project.setDescription(rs.getString("description"));
+        project.setStartDate(rs.getDate("start_date"));
+        project.setEndDate(rs.getDate("end_date"));
+        project.setStatus(rs.getString("status"));
+        project.setCreatedDate(rs.getTimestamp("created_at"));
+        project.setUpdatedDate(rs.getTimestamp("updated_at"));
+        return project;
     }
 }

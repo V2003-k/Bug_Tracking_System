@@ -1,6 +1,5 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -8,124 +7,162 @@
     <title>${project.projectName} - Bug Tracking System</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
 </head>
 <body>
     <jsp:include page="header.jsp" />
     
     <div class="container mt-4">
-        <div class="card">
+        <div class="card mb-4">
             <div class="card-header d-flex justify-content-between align-items-center">
-                <h4>${project.projectName}</h4>
+                <h4>Project Details</h4>
                 <div>
-                    <a href="project?action=edit&id=${project.projectId}" class="btn btn-primary">Edit Project</a>
-                    <a href="project?action=list" class="btn btn-secondary">Back to List</a>
+                    <a href="project?action=edit&id=${project.projectId}" class="btn btn-warning">Edit Project</a>
+                    <a href="project?action=list" class="btn btn-secondary">Back to Projects</a>
                 </div>
             </div>
             <div class="card-body">
                 <div class="row">
-                    <div class="col-md-8">
-                        <h5>Description</h5>
-                        <p>${project.description}</p>
-                        
-                        <h5 class="mt-4">Bugs</h5>
-                        <div class="mb-3">
-                            <a href="bug?action=new&projectId=${project.projectId}" class="btn btn-success">Report New Bug</a>
-                        </div>
-                        
-                        <c:if test="${empty bugs}">
-                            <p class="text-muted">No bugs reported for this project yet.</p>
-                        </c:if>
-                        
-                        <c:if test="${not empty bugs}">
-                            <div class="table-responsive">
-                                <table class="table table-striped">
-                                    <thead>
-                                        <tr>
-                                            <th>ID</th>
-                                            <th>Title</th>
-                                            <th>Status</th>
-                                            <th>Priority</th>
-                                            <th>Assigned To</th>
-                                            <th>Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <c:forEach var="bug" items="${bugs}">
-                                            <tr>
-                                                <td>${bug.bugId}</td>
-                                                <td>${bug.title}</td>
-                                                <td>
-                                                    <span class="badge ${bug.status == 'Open' ? 'badge-danger' : bug.status == 'In Progress' ? 'badge-warning' : 'badge-success'}">
-                                                        ${bug.status}
-                                                    </span>
-                                                </td>
-                                                <td>
-                                                    <span class="badge ${bug.priority == 'High' ? 'badge-danger' : bug.priority == 'Medium' ? 'badge-warning' : 'badge-info'}">
-                                                        ${bug.priority}
-                                                    </span>
-                                                </td>
-                                                <td>${bug.assignedToName}</td>
-                                                <td>
-                                                    <a href="bug?action=view&id=${bug.bugId}" class="btn btn-sm btn-info">View</a>
-                                                </td>
-                                            </tr>
-                                        </c:forEach>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <a href="bug?action=list&projectId=${project.projectId}" class="btn btn-primary">View All Bugs</a>
-                        </c:if>
+                    <div class="col-md-6">
+                        <h5>Project Information</h5>
+                        <table class="table table-bordered">
+                            <tr>
+                                <th style="width: 30%">Project ID</th>
+                                <td>${project.projectId}</td>
+                            </tr>
+                            <tr>
+                                <th>Name</th>
+                                <td>${project.projectName}</td>
+                            </tr>
+                            <tr>
+                                <th>Description</th>
+                                <td>${project.description}</td>
+                            </tr>
+                            <tr>
+                                <th>Start Date</th>
+                                <td>${project.startDate}</td>
+                            </tr>
+                            <tr>
+                                <th>End Date</th>
+                                <td>${project.endDate}</td>
+                            </tr>
+                            <tr>
+                                <th>Status</th>
+                                <td>
+                                    <span class="badge ${project.status == 'ACTIVE' ? 'badge-success' : project.status == 'COMPLETED' ? 'badge-primary' : 'badge-warning'}">
+                                        ${project.status}
+                                    </span>
+                                </td>
+                            </tr>
+                        </table>
                     </div>
-                    
-                    <div class="col-md-4">
-                        <div class="card">
-                            <div class="card-header">
-                                <h5>Project Details</h5>
+                    <div class="col-md-6">
+                        <h5>Project Statistics</h5>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="card bg-primary text-white">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Total Bugs</h5>
+                                        <h2 class="card-text">${projectBugs.size()}</h2>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="card-body">
-                                <table class="table">
-                                    <tr>
-                                        <th>Status:</th>
-                                        <td>
-                                            <span class="badge ${project.status == 'Active' ? 'badge-success' : project.status == 'On Hold' ? 'badge-warning' : 'badge-secondary'}">
-                                                ${project.status}
-                                            </span>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th>Start Date:</th>
-                                        <td><fmt:formatDate value="${project.startDate}" pattern="yyyy-MM-dd" /></td>
-                                    </tr>
-                                    <tr>
-                                        <th>End Date:</th>
-                                        <td>
-                                            <c:if test="${project.endDate != null}">
-                                                <fmt:formatDate value="${project.endDate}" pattern="yyyy-MM-dd" />
-                                            </c:if>
-                                            <c:if test="${project.endDate == null}">
-                                                Not specified
-                                            </c:if>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th>Total Bugs:</th>
-                                        <td>${bugs.size()}</td>
-                                    </tr>
-                                </table>
+                            <div class="col-md-6 mb-3">
+                                <div class="card bg-success text-white">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Fixed Bugs</h5>
+                                        <h2 class="card-text">
+                                            <c:set var="fixedCount" value="0" />
+                                            <c:forEach var="bug" items="${projectBugs}">
+                                                <c:if test="${bug.status == 'FIXED' || bug.status == 'CLOSED'}">
+                                                    <c:set var="fixedCount" value="${fixedCount + 1}" />
+                                                </c:if>
+                                            </c:forEach>
+                                            ${fixedCount}
+                                        </h2>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        
-                        <div class="card mt-4">
-                            <div class="card-header">
-                                <h5>Bug Statistics</h5>
+                            <div class="col-md-6 mb-3">
+                                <div class="card bg-warning text-white">
+                                    <div class="card-body">
+                                        <h5 class="card-title">In Progress</h5>
+                                        <h2 class="card-text">
+                                            <c:set var="inProgressCount" value="0" />
+                                            <c:forEach var="bug" items="${projectBugs}">
+                                                <c:if test="${bug.status == 'IN_PROGRESS'}">
+                                                    <c:set var="inProgressCount" value="${inProgressCount + 1}" />
+                                                </c:if>
+                                            </c:forEach>
+                                            ${inProgressCount}
+                                        </h2>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="card-body">
-                                <canvas id="bugStatusChart"></canvas>
+                            <div class="col-md-6 mb-3">
+                                <div class="card bg-danger text-white">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Open Bugs</h5>
+                                        <h2 class="card-text">
+                                            <c:set var="openCount" value="0" />
+                                            <c:forEach var="bug" items="${projectBugs}">
+                                                <c:if test="${bug.status == 'OPEN'}">
+                                                    <c:set var="openCount" value="${openCount + 1}" />
+                                                </c:if>
+                                            </c:forEach>
+                                            ${openCount}
+                                        </h2>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h4>Project Bugs</h4>
+                <a href="bug?action=new&projectId=${project.projectId}" class="btn btn-primary">Add New Bug</a>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Title</th>
+                            <th>Reported By</th>
+                            <th>Assigned To</th>
+                            <th>Status</th>
+                            <th>Priority</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <c:forEach var="bug" items="${projectBugs}">
+                            <tr>
+                                <td>${bug.bugId}</td>
+                                <td>${bug.title}</td>
+                                <td>${bug.reportedByName}</td>
+                                <td>${bug.assignedToName}</td>
+                                <td>
+                                    <span class="badge ${bug.status == 'OPEN' ? 'badge-danger' : bug.status == 'IN_PROGRESS' ? 'badge-warning' : bug.status == 'FIXED' ? 'badge-success' : 'badge-primary'}">
+                                        ${bug.status}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="badge ${bug.priority == 'LOW' ? 'badge-info' : bug.priority == 'MEDIUM' ? 'badge-warning' : bug.priority == 'HIGH' ? 'badge-danger' : 'badge-dark'}">
+                                        ${bug.priority}
+                                    </span>
+                                </td>
+                                <td>
+                                    <a href="bug?action=view&id=${bug.bugId}" class="btn btn-info btn-sm">View</a>
+                                    <a href="bug?action=edit&id=${bug.bugId}" class="btn btn-warning btn-sm">Edit</a>
+                                </td>
+                            </tr>
+                        </c:forEach>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -135,55 +172,5 @@
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
-    <script>
-        // Count bugs by status
-        var openCount = 0;
-        var inProgressCount = 0;
-        var fixedCount = 0;
-        var closedCount = 0;
-        
-        <c:forEach var="bug" items="${bugs}">
-            <c:if test="${bug.status == 'Open'}">
-                openCount++;
-            </c:if>
-            <c:if test="${bug.status == 'In Progress'}">
-                inProgressCount++;
-            </c:if>
-            <c:if test="${bug.status == 'Fixed'}">
-                fixedCount++;
-            </c:if>
-            <c:if test="${bug.status == 'Closed'}">
-                closedCount++;
-            </c:if>
-        </c:forEach>
-        
-        // Create chart
-        var ctx = document.getElementById('bugStatusChart').getContext('2d');
-        var bugStatusChart = new Chart(ctx, {
-            type: 'pie',
-            data: {
-                labels: ['Open', 'In Progress', 'Fixed', 'Closed'],
-                datasets: [{
-                    data: [openCount, inProgressCount, fixedCount, closedCount],
-                    backgroundColor: [
-                        '#dc3545', // Red for Open
-                        '#ffc107', // Yellow for In Progress
-                        '#17a2b8', // Cyan for Fixed
-                        '#28a745'  // Green for Closed
-                    ]
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        position: 'bottom'
-                    }
-                }
-            }
-        });
-    </script>
 </body>
 </html>

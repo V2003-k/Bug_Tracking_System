@@ -1,56 +1,56 @@
 USE BugTrackingSystem;
 
--- Drop the Users table if it exists
+-- Drop existing tables if they exist
 DROP TABLE IF EXISTS Comments;
 DROP TABLE IF EXISTS Bugs;
 DROP TABLE IF EXISTS Projects;
 DROP TABLE IF EXISTS Users;
 
--- Recreate Users table with the correct column names
+-- Create Users table
 CREATE TABLE IF NOT EXISTS Users (
-    userId INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(50) NOT NULL UNIQUE,
-    password VARCHAR(100) NOT NULL,
+    password VARCHAR(255) NOT NULL,
     email VARCHAR(100) NOT NULL UNIQUE,
-    fullName VARCHAR(100) NOT NULL,
-    role VARCHAR(20) NOT NULL CHECK (role IN ('Admin', 'Developer', 'Tester', 'Manager')),
-    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    full_name VARCHAR(100) NOT NULL,
+    role ENUM('ADMIN', 'DEVELOPER', 'TESTER', 'USER') NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Projects table
+-- Create Projects table
 CREATE TABLE IF NOT EXISTS Projects (
-    projectId INT AUTO_INCREMENT PRIMARY KEY,
-    projectName VARCHAR(100) NOT NULL,
+    project_id INT AUTO_INCREMENT PRIMARY KEY,
+    project_name VARCHAR(100) NOT NULL,
     description TEXT,
-    startDate DATE NOT NULL,
-    endDate DATE,
-    status VARCHAR(20) NOT NULL CHECK (status IN ('Active', 'Completed', 'On Hold', 'Cancelled'))
+    start_date DATE,
+    end_date DATE,
+    status ENUM('ACTIVE', 'COMPLETED', 'ON_HOLD') NOT NULL
 );
 
--- Bugs table
+-- Create Bugs table
 CREATE TABLE IF NOT EXISTS Bugs (
-    bugId INT AUTO_INCREMENT PRIMARY KEY,
-    title VARCHAR(200) NOT NULL,
-    description TEXT NOT NULL,
-    projectId INT NOT NULL,
-    reportedBy INT NOT NULL,
-    assignedTo INT NOT NULL,
-    status VARCHAR(20) NOT NULL CHECK (status IN ('Open', 'Closed', 'In Progress')),
-    priority VARCHAR(20) NOT NULL CHECK (priority IN ('High', 'Medium', 'Low')),
-    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (projectId) REFERENCES Projects(projectId),
-    FOREIGN KEY (reportedBy) REFERENCES Users(userId),
-    FOREIGN KEY (assignedTo) REFERENCES Users(userId)
+    bug_id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(100) NOT NULL,
+    description TEXT,
+    project_id INT,
+    reported_by INT,
+    assigned_to INT,
+    status ENUM('OPEN', 'IN_PROGRESS', 'FIXED', 'CLOSED') NOT NULL,
+    priority ENUM('LOW', 'MEDIUM', 'HIGH', 'CRITICAL') NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (project_id) REFERENCES Projects(project_id),
+    FOREIGN KEY (reported_by) REFERENCES Users(user_id),
+    FOREIGN KEY (assigned_to) REFERENCES Users(user_id)
 );
 
--- Comments table
+-- Create Comments table
 CREATE TABLE IF NOT EXISTS Comments (
-    commentId INT AUTO_INCREMENT PRIMARY KEY,
-    bugId INT NOT NULL,
-    userId INT NOT NULL,
-    content TEXT NOT NULL,
-    commentDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (bugId) REFERENCES Bugs(bugId),
-    FOREIGN KEY (userId) REFERENCES Users(userId)
-); 
+    comment_id INT AUTO_INCREMENT PRIMARY KEY,
+    bug_id INT NOT NULL,
+    user_id INT NOT NULL,
+    comment TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (bug_id) REFERENCES Bugs(bug_id),
+    FOREIGN KEY (user_id) REFERENCES Users(user_id)
+);

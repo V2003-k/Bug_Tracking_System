@@ -31,7 +31,7 @@ public class CommentServlet extends HttpServlet {
         Comment comment = new Comment();
         comment.setBugId(bugId);
         comment.setUserId(currentUser.getUserId());
-        comment.setCommentText(commentText);
+        comment.setComment(commentText);
         
         CommentDAO commentDAO = new CommentDAO();
         commentDAO.addComment(comment);

@@ -1,40 +1,25 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Bugs - Bug Tracking System</title>
+    <title>Bug List - Bug Tracking System</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
 </head>
 <body>
     <jsp:include page="header.jsp" />
     
     <div class="container mt-4">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2>
-                <c:if test="${projectName != null}">
-                    Bugs for Project: ${projectName}
-                </c:if>
-                <c:if test="${projectName == null}">
-                    All Bugs
-                </c:if>
-            </h2>
-            <div>
-                <a href="bug?action=new" class="btn btn-primary">Report New Bug</a>
-                <c:if test="${projectId != null}">
-                    <a href="project?action=view&id=${projectId}" class="btn btn-secondary">Back to Project</a>
-                </c:if>
-            </div>
-        </div>
-        
         <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h4>Bug List</h4>
+                <a href="bug?action=new" class="btn btn-primary">Report New Bug</a>
+            </div>
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table table-striped">
+                    <table class="table table-striped table-hover">
                         <thead>
                             <tr>
                                 <th>ID</th>
@@ -44,8 +29,8 @@
                                 <th>Assigned To</th>
                                 <th>Status</th>
                                 <th>Priority</th>
-                                <th>Created Date</th>
-                                <th>Action</th>
+                                <th>Created</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -57,19 +42,20 @@
                                     <td>${bug.reportedByName}</td>
                                     <td>${bug.assignedToName}</td>
                                     <td>
-                                        <span class="badge ${bug.status == 'Open' ? 'badge-danger' : bug.status == 'In Progress' ? 'badge-warning' : 'badge-success'}">
+                                        <span class="badge ${bug.status == 'OPEN' ? 'badge-danger' : bug.status == 'IN_PROGRESS' ? 'badge-warning' : bug.status == 'FIXED' ? 'badge-success' : 'badge-primary'}">
                                             ${bug.status}
                                         </span>
                                     </td>
                                     <td>
-                                        <span class="badge ${bug.priority == 'High' ? 'badge-danger' : bug.priority == 'Medium' ? 'badge-warning' : 'badge-info'}">
+                                        <span class="badge ${bug.priority == 'LOW' ? 'badge-info' : bug.priority == 'MEDIUM' ? 'badge-warning' : bug.priority == 'HIGH' ? 'badge-danger' : 'badge-dark'}">
                                             ${bug.priority}
                                         </span>
                                     </td>
-                                    <td><fmt:formatDate value="${bug.createdDate}" pattern="yyyy-MM-dd HH:mm" /></td>
+                                    <td>${bug.createdDate}</td>
                                     <td>
-                                        <a href="bug?action=view&id=${bug.bugId}" class="btn btn-sm btn-info">View</a>
-                                        <a href="bug?action=edit&id=${bug.bugId}" class="btn btn-sm btn-primary">Edit</a>
+                                        <a href="bug?action=view&id=${bug.bugId}" class="btn btn-info btn-sm">View</a>
+                                        <a href="bug?action=edit&id=${bug.bugId}" class="btn btn-warning btn-sm">Edit</a>
+                                        <a href="bug?action=delete&id=${bug.bugId}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this bug?')">Delete</a>
                                     </td>
                                 </tr>
                             </c:forEach>

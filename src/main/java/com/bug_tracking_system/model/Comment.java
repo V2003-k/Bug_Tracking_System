@@ -5,19 +5,13 @@ import java.sql.Timestamp;
 public class Comment {
     private int commentId;
     private int bugId;
+    private String bugTitle;
     private int userId;
-    private String commentText;
-    private Timestamp commentDate;
-    private String userName;
+    private String username;
+    private String comment;
+    private Timestamp createdDate;
     
-    public Comment() {}
-    
-    public Comment(int commentId, int bugId, int userId, String commentText, Timestamp commentDate) {
-        this.commentId = commentId;
-        this.bugId = bugId;
-        this.userId = userId;
-        this.commentText = commentText;
-        this.commentDate = commentDate;
+    public Comment() {
     }
     
     public int getCommentId() {
@@ -36,6 +30,14 @@ public class Comment {
         this.bugId = bugId;
     }
     
+    public String getBugTitle() {
+        return bugTitle;
+    }
+    
+    public void setBugTitle(String bugTitle) {
+        this.bugTitle = bugTitle;
+    }
+    
     public int getUserId() {
         return userId;
     }
@@ -44,27 +46,27 @@ public class Comment {
         this.userId = userId;
     }
     
-    public String getCommentText() {
-        return commentText;
+    public String getUsername() {
+        return username;
     }
     
-    public void setCommentText(String commentText) {
-        this.commentText = commentText;
+    public void setUsername(String username) {
+        this.username = username;
     }
     
-    public Timestamp getCommentDate() {
-        return commentDate;
+    public String getComment() {
+        return comment;
     }
     
-    public void setCommentDate(Timestamp commentDate) {
-        this.commentDate = commentDate;
+    public void setComment(String comment) {
+        this.comment = comment;
     }
     
-    public String getUserName() {
-        return userName;
+    public Timestamp getCreatedDate() {
+        return createdDate;
     }
     
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setCreatedDate(Timestamp createdDate) {
+        this.createdDate = createdDate;
     }
 }

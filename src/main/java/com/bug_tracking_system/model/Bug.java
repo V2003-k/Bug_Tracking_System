@@ -3,38 +3,26 @@ package com.bug_tracking_system.model;
 import java.sql.Timestamp;
 
 public class Bug {
-	private int bugId;
-	private String title;
-	private String description;
-	private int projectId;
-	private int reportedBy;
-	private int assignedTo;
-	private String status;
-	private String priority;
-	private Timestamp createdDate;
-	private Timestamp updatedDate;
-	
-	private String projectName;
-	private String reportedByName;
-	private String assignedToName;
-	
-	public Bug() {}
-	
-	public Bug(int bugId, String title, String description, int projectId, int reportedBy, 
-            int assignedTo, String status, String priority, Timestamp createdDate, Timestamp updatedDate) {
-		this.bugId = bugId;
-		this.title = title;
-		this.description = description;
-		this.projectId = projectId;
-		this.reportedBy = reportedBy;
-		this.assignedTo = assignedTo;
-		this.status = status;
-     	this.priority = priority;
-     	this.createdDate = createdDate;
-     	this.updatedDate = updatedDate;
-	}
-	
-	public int getBugId() {
+    private int bugId;
+    private String title;
+    private String description;
+    private int projectId;
+    private String projectName;
+    private int reportedBy;
+    private String reportedByUsername;
+    private String reportedByName;
+    private int assignedTo;
+    private String assignedToUsername;
+    private String assignedToName;
+    private String status;
+    private String priority;
+    private Timestamp createdDate;
+    private Timestamp updatedDate;
+    
+    public Bug() {
+    }
+    
+    public int getBugId() {
         return bugId;
     }
     
@@ -66,6 +54,14 @@ public class Bug {
         this.projectId = projectId;
     }
     
+    public String getProjectName() {
+        return projectName;
+    }
+    
+    public void setProjectName(String projectName) {
+        this.projectName = projectName;
+    }
+    
     public int getReportedBy() {
         return reportedBy;
     }
@@ -74,12 +70,44 @@ public class Bug {
         this.reportedBy = reportedBy;
     }
     
+    public String getReportedByUsername() {
+        return reportedByUsername;
+    }
+    
+    public void setReportedByUsername(String reportedByUsername) {
+        this.reportedByUsername = reportedByUsername;
+    }
+    
+    public String getReportedByName() {
+        return reportedByName;
+    }
+    
+    public void setReportedByName(String reportedByName) {
+        this.reportedByName = reportedByName;
+    }
+    
     public int getAssignedTo() {
         return assignedTo;
     }
     
     public void setAssignedTo(int assignedTo) {
         this.assignedTo = assignedTo;
+    }
+    
+    public String getAssignedToUsername() {
+        return assignedToUsername;
+    }
+    
+    public void setAssignedToUsername(String assignedToUsername) {
+        this.assignedToUsername = assignedToUsername;
+    }
+    
+    public String getAssignedToName() {
+        return assignedToName;
+    }
+    
+    public void setAssignedToName(String assignedToName) {
+        this.assignedToName = assignedToName;
     }
     
     public String getStatus() {
@@ -112,29 +140,5 @@ public class Bug {
     
     public void setUpdatedDate(Timestamp updatedDate) {
         this.updatedDate = updatedDate;
-    }
-    
-    public String getProjectName() {
-        return projectName;
-    }
-    
-    public void setProjectName(String projectName) {
-        this.projectName = projectName;
-    }
-    
-    public String getReportedByName() {
-        return reportedByName;
-    }
-    
-    public void setReportedByName(String reportedByName) {
-        this.reportedByName = reportedByName;
-    }
-    
-    public String getAssignedToName() {
-        return assignedToName;
-    }
-    
-    public void setAssignedToName(String assignedToName) {
-        this.assignedToName = assignedToName;
     }
 }

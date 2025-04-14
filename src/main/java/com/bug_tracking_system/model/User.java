@@ -7,17 +7,17 @@ public class User {
 	private String username;
 	private String password;
 	private String email;
-	private String fullName;
+	private String full_Name;
 	private String role;
 
 	public User() {
 	}
 
-	public User(String username, String password, String email, String fullName, String role) {
+	public User(String username, String password, String email, String full_Name, String role) {
 		this.username = username;
 		this.password = password;
 		this.email = email;
-		this.fullName = fullName;
+		this.full_Name = full_Name;
 		this.role = role;
 	}
 	
@@ -53,12 +53,13 @@ public class User {
         this.email = email;
     }
     
+    // Make sure the getter and setter for fullName are correctly defined
     public String getFullName() {
-        return fullName;
+        return full_Name;
     }
     
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
+    public void setFullName(String full_Name) {
+        this.full_Name = full_Name;
     }
     
     public String getRole() {
@@ -77,7 +78,7 @@ public class User {
 	@Override
 	public String toString() {
 		return "User [userId=" + userId + ", username=" + username + 
-			   ", email=" + email + ", fullName=" + fullName + 
+			   ", email=" + email + ", full_Name=" + full_Name + 
 			   ", role=" + role + "]";
 	}
 }
